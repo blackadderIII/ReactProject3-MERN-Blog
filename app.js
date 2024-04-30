@@ -14,6 +14,7 @@ app.set('view engine','ejs');
 
 app.use('/',require('./server/routes/main'))
 
+
 // Define an anonymous function that logs a message to the console
 // when the app is listening on a specified port
 // Use string interpolation to include the value of the PORT variable
