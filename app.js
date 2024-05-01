@@ -5,6 +5,12 @@ const expressLayout = require('express-ejs-layouts')
 const app = express();
 const PORT = 5000 || process.env.PORT;
 
+// connect to database
+const connectDB = require('./server/config/db');
+
+connectDB();
+
+
 app.use(express.static('public'));
 
 // Templating Engine
