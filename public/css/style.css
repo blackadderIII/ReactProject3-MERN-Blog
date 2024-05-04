@@ -313,6 +313,7 @@ h3{
 
 
 .searchBar.open {
+  visibility: visible;
   transform: translateY(0);
   transition: transform 0.1s;
 }
@@ -328,6 +329,7 @@ h3{
   right: 0;
   color: var(--gray-light);
   padding: 15px;
+  cursor: pointer;
 }
 
 
