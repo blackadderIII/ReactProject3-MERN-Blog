@@ -10,6 +10,9 @@ const connectDB = require('./server/config/db');
 
 connectDB();
 
+// allows passing of data through forms
+app.use(express.urlencoded({extended:true}));
+app.use(express.json());
 
 app.use(express.static('public'));
 
