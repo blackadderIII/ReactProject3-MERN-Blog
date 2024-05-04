@@ -33,37 +33,46 @@ router.get("", async (req, res) => {
   }
 });
 
-// router.get('',async(req,res)=>{
-//     const locals = {
-//         title: "NodeJS Blog",
-//         description:"Simple Blog created with NodeJs,Express & MongoDb."
-//     }
-
-//     try {
-//         const data = await Post.find().sort({date:'desc'}); // Sorting the Data by Date in Descending Order.
-//         res.render('index',{locals,data});
-//     } catch (error) {
-//         console.log(`Error Fetching From Database. ${error}`);
-//     }
-// });
-
 // Get Post:id
 router.get("/post/:id/", async (req, res) => {
-
   try {
     let slug = req.params.id;
 
-    
     const data = await Post.findById({ _id: slug });
 
     const locals = {
-        title: data.title,
-        description: "Simple Blog created with NodeJs, Express & MongoDb.",
-      }
+      title: data.title,
+      description: "Simple Blog created with NodeJs, Express & MongoDb.",
+    };
 
-    res.render('post', { locals, data });
+    res.render("post", { locals, data });
   } catch (error) {
     console.log(error);
+  }
+});
+
+// POST
+// post - searchTerm
+
+router.post("/search", async (req, res) => {
+  try {
+    const locals = {
+      title: "Search",
+      description: "Simple Blog created with NodeJs,Express & MongoDb.",
+    };
+
+    let searchTerm = req.body.searchTerm;
+    const searchNoSpecialChar = searchTerm.replace(/[^a-zA-Z0-9]/g, ""); // remove special characters from the search term
+
+    const data = await Post.find({
+      $or: [
+        { title: { $regex: new RegExp(searchNoSpecialChar, "i") } },
+        { body: { $regex: new RegExp(searchNoSpecialChar, "i") } },
+      ],
+    });
+    res.render("search", { locals, data });
+  } catch (error) {
+    console.log(`Error Fetching From Database. ${error}`);
   }
 });
 
