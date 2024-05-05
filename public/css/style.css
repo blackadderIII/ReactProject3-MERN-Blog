@@ -309,13 +309,14 @@ h3{
   position: absolute;
   left: 0;
   right: 0;
+  transition: transform 0.1s;
 }
 
 
 .searchBar.open {
   visibility: visible;
   transform: translateY(0);
-  transition: transform 0.1s;
+  
 }
 
 .searchBar input {
