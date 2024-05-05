@@ -53,7 +53,6 @@ router.get("/post/:id/", async (req, res) => {
 
 // POST
 // post - searchTerm
-
 router.post("/search", async (req, res) => {
   try {
     const locals = {
