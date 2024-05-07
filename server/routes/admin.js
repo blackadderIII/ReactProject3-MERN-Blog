@@ -6,7 +6,23 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const adminLayout = "../views/layouts/admin";
+const jwtSecret = process.env.JWT_SECRET;
 
+
+// Get - Check Login - middleware
+const authMiddleware = (req,res,next) =>{
+  const token = req.cookies.token;
+  if(!token){
+    res.status(401).json({msg:'Unauthorized'})
+}
+  try {
+    const decoded = jwt.verify(token,jwtSecret)
+    req.userID = decoded.userID;
+    next();
+  } catch (error) {
+    console.log(error)
+  }
+}
 // Post
 // Admin - Check Login
 
@@ -15,17 +31,25 @@ router.post("/admin", async (req, res) => {
     // Get user from the request body
     const { username, password } = req.body;
 
-    if (req.body.username === 'admin' && req.body.password ==='password'){
-      res.send('You are in')
+    const user = await User.findOne({ username });
+
+    if (!user) {
+      return res.status(401).json({ msg: "Invalid Credentials" });
     }
-    else{
-      res.send('no No NOOOO')
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ msg: "Invalid Credentials" });
     }
+
+    const token = jwt.sign({ userID: user._id }, jwtSecret);
+    res.cookie("token", token, { httpOnly: true });
+    res.redirect("/dashboard");
   } catch (error) {
     console.log(error);
   }
 });
-
 
 // Post
 // Admin - Register
@@ -36,25 +60,20 @@ router.post("/register", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     try {
-      const user = await User.create({ username, password:hashedPassword });
-      res.status(201).json({ message: 'User Created', user });
+      const user = await User.create({ username, password: hashedPassword });
+      res.status(201).json({ message: "User Created", user });
     } catch (error) {
-      if(error.code === 11000) {
-        res.status(409).json({ message: 'User already in use'});
+      if (error.code === 11000) {
+        res.status(409).json({ message: "User already in use" });
       }
-      res.status(500).json({ message: 'Internal server error'})
+      res.status(500).json({ message: "Internal server error" });
     }
-
   } catch (error) {
     console.log(error);
   }
 });
 
-
-
-
-
-
+// Get admin home
 router.get("/admin", async (req, res) => {
   try {
     const locals = {
@@ -68,4 +87,11 @@ router.get("/admin", async (req, res) => {
   }
 });
 
+
+// Get dashboard
+// Admin - Check Login
+
+router.get("/dashboard", authMiddleware, async (req, res) => {
+  res.render('admin/dashboard');
+})
 module.exports = router;
