@@ -15,8 +15,12 @@ router.post("/admin", async (req, res) => {
     // Get user from the request body
     const { username, password } = req.body;
 
-    res.redirect("/admin");
-    // res.render('admin/index', { locals, layout: adminLayout });
+    if (req.body.username === 'admin' && req.body.password ==='password'){
+      res.send('You are in')
+    }
+    else{
+      res.send('no No NOOOO')
+    }
   } catch (error) {
     console.log(error);
   }
@@ -45,6 +49,11 @@ router.post("/register", async (req, res) => {
     console.log(error);
   }
 });
+
+
+
+
+
 
 router.get("/admin", async (req, res) => {
   try {
