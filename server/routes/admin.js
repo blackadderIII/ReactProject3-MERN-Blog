@@ -26,7 +26,7 @@ router.post("/admin", async (req, res) => {
 // Post
 // Admin - Register
 
-router.post('/register', async (req, res) => {
+router.post("/register", async (req, res) => {
   try {
     const { username, password } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
