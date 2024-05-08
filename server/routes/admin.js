@@ -10,17 +10,19 @@ const jwtSecret = process.env.JWT_SECRET;
 
 
 // Get - Check Login - middleware
-const authMiddleware = (req,res,next) =>{
+const authMiddleware = (req, res, next ) => {
   const token = req.cookies.token;
-  if(!token){
-    res.status(401).json({msg:'Unauthorized'})
-}
+
+  if(!token) {
+    return res.status(401).json( { message: 'Unauthorized'} );
+  }
+
   try {
-    const decoded = jwt.verify(token,jwtSecret)
-    req.userID = decoded.userID;
+    const decoded = jwt.verify(token, jwtSecret);
+    req.userId = decoded.userId;
     next();
-  } catch (error) {
-    console.log(error)
+  } catch(error) {
+    res.status(401).json( { message: 'Unauthorized'} );
   }
 }
 // Post
@@ -90,8 +92,38 @@ router.get("/admin", async (req, res) => {
 
 // Get dashboard
 // Admin - Check Login
-
 router.get("/dashboard", authMiddleware, async (req, res) => {
-  res.render('admin/dashboard');
+  try{
+    const locals ={
+      title:'Dashboard',
+      description: 'This is the Admin Dashboard Page'
+    }
+    const data = await Post.find();
+    
+    res.render("admin/dashboard",{ locals,data ,layout: adminLayout});
+  }
+  catch(error){
+      console.log(error)
+  }
+})
+
+
+
+// Get Admin 
+// Create New Post
+
+router.get("/add-post", authMiddleware, async (req, res) => {
+  try{
+    const locals ={
+      title:'Dashboard',
+      description: 'This is the Admin Dashboard Page'
+    }
+    const data = await Post.find();
+    
+    res.render("admin/add-post",{ locals,layout: adminLayout});
+  }
+  catch(error){
+      console.log(error)
+  }
 })
 module.exports = router;
