@@ -146,7 +146,6 @@ router.get("/edit-post/:id", authMiddleware, async (req, res) => {
 
 // Post Admin 
 // Create New Post
-
 router.post("/add-post", authMiddleware, async (req, res) => {
   try{
     const newPost = new Post({
@@ -179,6 +178,19 @@ router.put("/edit-post/:id", authMiddleware, async (req, res) => {
   }
 })
 
+
+
+//Delete
+// Admin Delete Post
+router.delete("/delete-post/:id", authMiddleware, async (req, res) => {
+  try{
+    await Post.deleteOne({ _id: req.params.id });    
+    res.redirect("/dashboard");
+  }
+  catch(error){
+      console.log(error)
+  }
+})
 
 
 module.exports = router;
